@@ -4,8 +4,10 @@ module Liftoff
       @name = configuration.project_name
       @deployment_target = configuration.deployment_target
       @test_target_name = configuration.test_target_name
+      @company_identifier = configuration.company_identifier
       set_company_name(configuration.company)
       set_prefix(configuration.prefix)
+      set_swift_upgrade_check
       create_build_configurations(configuration.build_configurations)
       configure_base_project_settings
     end
@@ -60,6 +62,7 @@ module Liftoff
         configuration.build_settings.delete('SKIP_INSTALL')
         configuration.build_settings.delete('INSTALL_PATH')
         configuration.build_settings['LD_RUNPATH_SEARCH_PATHS'] = ['$(inherited)', '@executable_path/Frameworks']
+        configuration.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "#{@company_identifier}.${PRODUCT_NAME:rfc1034identifier}"
       end
       target
     end
@@ -72,6 +75,11 @@ module Liftoff
       xcode_project.root_object.attributes['ORGANIZATIONNAME'] = company
     end
 
+    def set_swift_upgrade_check
+      xcode_project.root_object.attributes['LastUpgradeCheck'] = '0800'
+      xcode_project.root_object.attributes['LastSwiftUpdateCheck'] = '0800'
+    end
+
     def create_build_configurations(build_configurations)
       builder = BuildConfigurationBuilder.new(xcode_project)
       builder.generate_build_configurations(build_configurations)
@@ -80,7 +88,7 @@ module Liftoff
     def new_test_target(name)
       target = xcode_project.new_resources_bundle(name, :ios)
       target.product_type = 'com.apple.product-type.bundle.unit-test'
-      target.product_reference.name = "#{name}.xctest"
+      target.product_reference.path = "#{name}.xctest"      
       target.add_dependency(app_target)
       configure_search_paths(target)
       target.build_configurations.each do |configuration|
