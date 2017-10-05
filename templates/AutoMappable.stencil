@@ -1,0 +1,22 @@
+import ObjectMapper
+
+// MARK: - AutoMappable
+{% for model in types.based.AutoMappable %}
+
+extension {{ model.name }}: StaticMappable {
+    static func objectForMapping(map: Map) -> BaseMappable? {
+        return {{ model.name }}()
+    }
+
+    mutating func mapping(map: Map) {
+        {% for variable in model.storedVariables %}
+        {% if variable.annotations.Transformer != nil %}
+        {{ variable.name }} <- (map["{{ variable.annotations.JSONKey|default:variable.name }}"], {{ variable.annotations.Transformer }})
+        {% else %}
+        {{ variable.name }} <- map["{{ variable.annotations.JSONKey|default:variable.name }}"]
+        {% endif %}        
+        {% endfor %}
+    }
+}
+
+{% endfor %}

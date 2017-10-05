@@ -1,0 +1,6 @@
+sources:
+  - <%= project_name %>/
+templates:
+  - <%= project_name %>/Common/SourceryTemplates/
+output:
+  - <%= project_name %>/Common/Generated/Sourcery/
