@@ -1,10 +1,10 @@
-# <img src="http://thoughtbot.github.io/liftoff/logo.png" alt="Logo" width="25%">
+# <img src="http://liftoffcli.github.io/liftoff/logo.png" alt="Logo" width="25%">
 
 **Liftoff is a CLI for creating and configuring iOS Xcode projects.**
 
 ## Installation
 
-    brew tap thoughtbot/formulae
+    brew tap liftoffcli/formulae
     brew install liftoff
 
 Liftoff was previously distributed via RubyGems. This method of installation has
@@ -39,8 +39,8 @@ perform the following configurations:
 * Add default [.gitignore] and [.gitattributes] files.
 * Initialize a new `git` repo and create an initial commit (if needed).
 
-[.gitignore]: https://github.com/thoughtbot/liftoff/blob/master/templates/gitignore
-[.gitattributes]: https://github.com/thoughtbot/liftoff/blob/master/templates/gitattributes
+[.gitignore]: https://github.com/liftoffcli/liftoff/blob/master/templates/gitignore
+[.gitattributes]: https://github.com/liftoffcli/liftoff/blob/master/templates/gitattributes
 [deallocated-todo]: http://deallocatedobjects.com/posts/show-todos-and-fixmes-as-warnings-in-xcode-4
 
 When you run Liftoff in a directory without a project file, it will create a
@@ -84,7 +84,7 @@ use the default values. Check `liftoffrc(5)` for more information:
 You can see the [current liftoffrc on master][liftoffrc], but be aware that
 the keys might not match up completely with the current released version.
 
-[liftoffrc]: https://github.com/thoughtbot/liftoff/blob/master/defaults/liftoffrc
+[liftoffrc]: https://github.com/liftoffcli/liftoff/blob/master/defaults/liftoffrc
 
 ### Directory Structure and Templates
 
@@ -125,16 +125,7 @@ Contributing
 See the [CONTRIBUTING] document. Thank you, [contributors]!
 
 [CONTRIBUTING]: CONTRIBUTING.md
-[contributors]: https://github.com/thoughtbot/Liftoff/graphs/contributors
-
-Need Help?
-----------
-
-We offer 1-on-1 coaching. We can help you with functional programming in Swift,
-get started writing unit tests, and convert from Objective-C to Swift.
-[Get in touch].
-
-[Get in touch]: http://coaching.thoughtbot.com/ios/?utm_source=github
+[contributors]: https://github.com/liftoffcli/Liftoff/graphs/contributors
 
 License
 -------
@@ -149,12 +140,5 @@ About
 
 ![thoughtbot](https://thoughtbot.com/logo.png)
 
-Liftoff is maintained and funded by thoughtbot, inc. The names and logos for
-thoughtbot are trademarks of thoughtbot, inc.
-
-We love open source software! See [our other projects][community] or look at
-our product [case studies] and [hire us][hire] to help build your iOS app.
-
-[community]: https://thoughtbot.com/community?utm_source=github
-[case studies]: https://thoughtbot.com/ios?utm_source=github
-[hire]: https://thoughtbot.com/hire-us?utm_source=github
+Liftoff was originally maintained and funded by thoughtbot, inc. The names and
+logos for thoughtbot are trademarks of thoughtbot, inc.
