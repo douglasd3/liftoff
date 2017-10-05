@@ -1,14 +1,12 @@
-//
-//  AppDelegate.swift
-//  <%= project_name %>
-//
-//  Created by <%= author %> on <%= Time.now.strftime("%-m/%-d/%y") %>
-//  Copyright (c) <%= Time.now.strftime('%Y') %> <%= company %>. All rights reserved.
-//
-
 import UIKit
 
-@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+        window = UIWindow()
+
+        window?.makeKeyAndVisible()
+        return true
+    }
 }

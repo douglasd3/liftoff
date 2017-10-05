@@ -23,7 +23,7 @@ extra_config:
     SWIFT_VERSION:
       - 4.0
     ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES:
-      - 'YES'    
+      - '$(inherited)'    
 
 run_script_phases:
   - file: rswift.sh
@@ -32,6 +32,14 @@ run_script_phases:
   - file: swiftlint.sh
     name: Swiftlint
     index: 1
+  - file: sourcery.sh
+    name: Sourcery
+    index: 2
+  - file: tag.sh
+    name: Tag Icons
+    index: 3
+  - file: restore.sh
+    name: Restore Icons
 
 templates:
   - circle.yml: .circle.yml
@@ -44,6 +52,7 @@ templates:
   - Matchfile: fastlane/Matchfile
   - constants.yaml: fastlane/constants.yaml
   - Gemfile.rb: Gemfile
+  - tag_icons.sh: scripts/tag_icons.sh
  
 warnings:
   - GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED
@@ -87,19 +96,64 @@ app_target_templates:
     - Common:
       - Extensions:
       - Protocols:
+        - SourceryProtocols.swift
     - App:
-      - AppDelegate.swift  
+      - AppDelegate.swift
+      - TestsAppDelegate.swift
     - Resources:      
-      - R:
+      - Generated:
+        - R:
+        - Sourcery:
       - Storyboards:
         - Main.storyboard
         - LaunchScreen.storyboard
       - Assets.xcassets
     - Supporting Files:
-      - Info.plist   
+      - main.swift
+      - Info.plist
+  - <%= project_name %>Domain
+    - Entity:
+
+  clean:
+  - <%= project_name %>:
+    - Entity:
+    - Scene:
+      - Sample Scene:
+        - ViewController:
+        - ViewModel:
+    - Util:
+      - Extensions:
+      - Protocols:
+        - SourceryProtocols.swift
+    - Coordinator:
+    - App:
+      - AppDelegate.swift
+      - TestsAppDelegate.swift   
+    - Resources:
+      - SourceryTemplates:
+        - AutoEquatable.stencil
+        - AutoMockable.stencil
+        - AutoMappable.stencil
+      - Generated:
+        - R:
+        - Sourcery:
+      - Storyboards:
+        - LaunchScreen.storyboard
+      - Assets.xcassets
+    - Supporting Files:
+      - main.swift
+      - Info.plist
+
  
-test_target_templates:
+test_target_templates: 
   swift:
+    - <%= test_target_name %>:
+      - Resources:
+        - <%= test_target_name %>-Info.plist
+      - Helpers:
+      - Specs:
+
+  clean:
     - <%= test_target_name %>:
       - Resources:
         - <%= test_target_name %>-Info.plist

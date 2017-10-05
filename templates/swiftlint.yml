@@ -1,18 +1,32 @@
 disabled_rules: # rule identifiers to exclude from running
   - line_length  
   - statement_position
+
 excluded: # paths to ignore during linting. Takes precedence over `included`.  
   - Pods  
   - <%= project_name %>/Resources/R/R.generated.swift
   - Tests
+
+identifier_name:
+  excluded:
+    - id
+
+large_tuple:
+  warning: 4
+  error: 5
+ 
 custom_rules:
   else_statement:
-    regex: "(\} else)"
+    included: ".*.swift"
+    excluded: "*Snapshot*.swift"
+    regex: "(\\} else)"
     message: "else statement should be on next line"
     match_kinds: keyword
     severity: error   
   catch_statement: 
-    regex: "(\} catch)"
+    included: ".*.swift"
+    excluded: "*Snapshot*.swift"    
+    regex: "(\\} catch)"
     message: "catch statement should be on next line"
     match_kinds: keyword
     severity: error   
