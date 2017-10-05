@@ -1,0 +1,20 @@
+for_platform :ios do
+    team_id ''
+    apple_id 'ios@helabs.com.br'
+
+    for_lane :match_staging do
+        app_identifier ''
+    end
+
+    for_lane :match_production do
+        app_identifier ''
+    end
+
+    for_lane :beta do
+        app_identifier ''
+    end
+
+    for_lane :deploy do
+        app_identifier ''
+    end
+end

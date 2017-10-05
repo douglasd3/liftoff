@@ -4,13 +4,7 @@
 
 ## Installation
 
-    brew tap liftoffcli/formulae
-    brew install liftoff
-
-Liftoff was previously distributed via RubyGems. This method of installation has
-been deprecated, and all new releases will be done through Homebrew. If you are
-migrating from RubyGems, you should uninstall the gem version to avoid confusion
-in the future.
+Clone this repository and add `bin` folder of this project in your PATH variable.
 
 ## Usage
 

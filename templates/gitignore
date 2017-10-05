@@ -24,7 +24,7 @@ build/
 *.dat
 *.dep
 
-# Cocoapods
+# Dependencies
 Pods
 Carthage
 

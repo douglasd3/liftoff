@@ -1,0 +1,16 @@
+proj:
+  path: "./<%= project_name %>"
+  plist: "./<%= project_name %>/Supporting Files/Info.plist"
+  xcodeproj: "./<%= project_name %>.xcodeproj"
+  repo_url: 
+  scheme_staging: 
+  scheme_production: 
+  app_identifier: 
+  app_identifier_staging: 
+  ipa_directory: "./<%= project_name %>/ipa"
+  ipa_path: './<%= project_name %>/ipa/<%= project_name %>.ipa'
+  dsym_path: "./<%= project_name %>/ipa/<%= project_name %>.app.dSYM.zip"
+  should_skip_wait: true
+  default_branch: develop
+  crashlytics_token: ''
+  hockey_app_id: ''

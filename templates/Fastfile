@@ -1,0 +1,187 @@
+fastlane_require 'yaml'
+constants = YAML.load(open(File.join(File.dirname(__FILE__),"constants.yaml")))
+
+fastlane_version '2.59.0'
+default_platform :ios
+
+platform :ios do
+
+  ######## CODE SIGNING ##########
+
+  desc "Execute match with staging bundle identifier"
+  lane :match_staging do |options|
+    if (options[:type] == 'appstore')
+      match(type: options[:type])
+    else
+      match(type: options[:type], force_for_new_devices: true)            
+    end
+  end
+
+  desc "Execute match with production bundle identifier"
+  lane :match_production do |options|
+    if (options[:type] == 'appstore')
+      match(type: options[:type])
+    else
+      match(type: options[:type], force_for_new_devices: true)            
+    end
+  end
+
+  ######## DEPLOY ##########
+
+  desc "Deploy a new version to TestFlight"
+  lane :beta do   
+    if (constants['proj']['app_identifier_staging'].to_s.empty? || 
+      constants['proj']['scheme_staging'].to_s.empty? || 
+      constants['proj']['ipa_directory'].to_s.empty?)
+      raise "You need to configure your constants.yaml"
+    end
+
+    bump       
+    cocoapods
+    
+    match(
+      type: 'appstore', 
+      app_identifier: constants['proj']['app_identifier_staging']
+    )
+    gym(
+      scheme: constants['proj']['scheme_staging'], 
+      output_directory: constants['proj']['ipa_directory'],
+      output_name: '<%= project_name %>',
+      clean: true
+    )
+    pilot(
+      ipa: constants['proj']['ipa_path'],
+      skip_submission: true,
+      skip_waiting_for_build_processing: true
+    )
+
+    upload_to_crashlytics_and_clean_build_artifacts
+  end
+
+  desc "Deploy a new version to the App Store"
+  lane :deploy do
+    if (constants['proj']['app_identifier_staging'].to_s.empty? || 
+      constants['proj']['scheme_staging'].to_s.empty? || 
+      constants['proj']['ipa_directory'].to_s.empty?)
+      raise "You need to configure your constants.yaml"
+    end
+
+    bump
+    cocoapods
+    
+    match(
+        type: "appstore", 
+        app_identifier: constants['proj']['app_identifier']
+    )
+    gym(
+        scheme: constants['proj']['scheme_production'], 
+        output_directory: constants['proj']['ipa_directory'],
+        output_name: '<%= project_name %>',
+        clean: true
+    )
+
+    deliver(force: true)
+
+    upload_to_crashlytics_and_clean_build_artifacts
+  end
+
+  def upload_to_crashlytics_and_clean_build_artifacts
+    if constants['proj']['crashlytics_token'].to_s.empty? == false && constants['proj']['dsym_path'].to_s.empty? == false
+      upload_symbols_to_crashlytics(
+        api_token: constants['proj']['crashlytics_token'], 
+        dsym_path: constants['proj']['dsym_path']
+      )
+    end
+
+    clean_build_artifacts
+  end
+
+  ######## DEVICE ##########
+
+  desc "Add new device to Member Center"
+	lane :add_device do
+    device_name = prompt(text: "Device name: ")
+    device_udid = prompt(text: "Device UDID: ")
+    register_devices(devices: {device_name => device_udid})
+
+    refresh_profiles
+	end
+
+  # Helper lane to refresh all provisioning profiles with new devices added
+  private_lane :refresh_profiles do
+    match(type: "development", force_for_new_devices: true)
+  end
+
+  ######## VERSIONING ##########
+
+  def get_version_short_string
+    if (constants['proj']['plist'] == nil)
+        raise "Your fastlane File is missing a plist variable: proj[:plist] = './PATH_TO_PROJECT/Info.plist' ".red
+    end
+
+    get_info_plist_value(path: constants['proj']['plist'], key: 'CFBundleShortVersionString')
+  end
+
+  desc "Change version number with prompt"
+  lane :change_version_number do
+      number = prompt(text: 'Version number: ')
+      version_number = update_version_number_and_commit(number: number)
+      version_number
+  end
+
+  desc "Increment Patch version"
+  lane :patch do 
+      version_number = update_version_number_and_commit(bump_type: "patch")
+      version_number
+  end
+
+  desc "Increment minor version"
+  lane :minor do 
+      version_number = update_version_number_and_commit(bump_type: "minor")
+      version_number
+  end  
+
+  desc "Increment major version"
+  lane :major do 
+      version_number = update_version_number_and_commit(bump_type: "major")
+      version_number
+  end
+
+  desc "bump build version and commit"
+  lane :bump do
+      build_number = increment_build_with_number_of_commits
+      sh "git commit -am \"Build version bump: #{build_number} [ci skip]\""
+
+      build_number
+  end
+
+  private_lane :increment_build_with_number_of_commits do
+      number_of_commits = sh "git rev-list HEAD --count"
+      increment_build_number(build_number: number_of_commits)
+
+      lane_context[SharedValues::BUILD_NUMBER]
+  end
+
+  private_lane :update_version_number_and_commit do |options|
+      ensure_git_status_clean
+      new_version_number = options[:number]
+      bump_type = options[:bump_type]
+
+      if (constants['proj']['xcodeproj'] == nil)
+          raise "Your fastlane File is missing a xcodeproj variable: proj[:xcodeproj] = './PATH_TO_PROJECT.xcodeproj/' ".red
+      end
+
+      if new_version_number
+          increment_version_number(version_number: new_version_number, xcodeproj: constants['proj']['xcodeproj'])
+      elsif bump_type
+          increment_version_number(bump_type: bump_type, xcodeproj: constants['proj']['xcodeproj'])
+      else
+          increment_version_number(xcodeproj: constants['proj']['xcodeproj'])
+      end
+
+      version_number = get_version_short_string
+      sh "git commit -am \"Change version number: #{version_number} [ci skip]\""
+      version_number
+  end
+
+end

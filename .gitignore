@@ -4,3 +4,5 @@ pkg/
 # Sub-repositories for release
 gh-pages
 homebrew-formulae
+
+.vscode/
