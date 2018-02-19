@@ -111,8 +111,6 @@ app_target_templates:
     - Supporting Files:
       - main.swift
       - Info.plist
-  - <%= project_name %>Domain
-    - Entity:
 
   clean:
   - <%= project_name %>:
